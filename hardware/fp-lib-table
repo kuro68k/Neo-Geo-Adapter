@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Slide_Switch_TH")(type "KiCad")(uri "${KURO68K}/Slide_Switch_TH.pretty")(options "")(descr ""))
+  (lib (name "Retro_Game_Connectors_3rd_Party")(type "KiCad")(uri "${KURO68K}/Retro_Game_Connectors_3rd_Party.pretty")(options "")(descr ""))
+)

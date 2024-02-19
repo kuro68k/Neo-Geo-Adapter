@@ -1,2 +1,1 @@
-# Neo Geo Adapter
- 
+# Neo-Geo-Adapter
