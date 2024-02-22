@@ -173,23 +173,73 @@ int main(void)
 
 		// TODO: analogue sticks
 
-		uint8_t neo_port1 = 0;
-		uint8_t neo_port2 = 0;
+
+		// switches
+		uint8_t map = 0;
+		map |= (SW_MODE1_PORT.IN & SW_MODE1_PIN_bm) ? (1<<0) : 0;
+		map |= (SW_MODE2_PORT.IN & SW_MODE2_PIN_bm) ? (1<<1) : 0;
+		uint8_t af_mode = 0;
+		map |= (SW_AUTO1_PORT.IN & SW_AUTO1_PIN_bm) ? (1<<0) : 0;
+		map |= (SW_AUTO2_PORT.IN & SW_AUTO2_PIN_bm) ? (1<<1) : 0;
 
 		// autofire
 		uint8_t af_count = af_counter_AT;
 		uint8_t af_a = 0;
+		uint8_t af_ap = 0;
+		uint8_t af_b = 0;
+		uint8_t af_bp = 0;
+		uint8_t af_c = 0;
+		uint8_t af_cp = 0;
+		uint8_t af_d = 0;
+		uint8_t af_dp = 0;
+		switch (af_mode)
+		{
+			case AF_MODE_DUAL:
+			default:
+				if (!(SW_AF_A1_PORT.IN & SW_AF_A1_PIN_bm))	af_ap = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_A2_PORT.IN & SW_AF_A2_PIN_bm))	af_ap = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_B1_PORT.IN & SW_AF_B1_PIN_bm))	af_bp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_B2_PORT.IN & SW_AF_B2_PIN_bm))	af_bp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_C1_PORT.IN & SW_AF_C1_PIN_bm))	af_cp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_C2_PORT.IN & SW_AF_C2_PIN_bm))	af_cp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_D1_PORT.IN & SW_AF_D1_PIN_bm))	af_dp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_D2_PORT.IN & SW_AF_D2_PIN_bm))	af_dp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				af_a = af_b = af_c = af_d = 0xFF;
+				break;
+
+			case AF_MODE_ALL:
+				if (!(SW_AF_A1_PORT.IN & SW_AF_A1_PIN_bm))	af_ap = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_A2_PORT.IN & SW_AF_A2_PIN_bm))	af_ap = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_B1_PORT.IN & SW_AF_B1_PIN_bm))	af_bp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_B2_PORT.IN & SW_AF_B2_PIN_bm))	af_bp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_C1_PORT.IN & SW_AF_C1_PIN_bm))	af_cp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_C2_PORT.IN & SW_AF_C2_PIN_bm))	af_cp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				if (!(SW_AF_D1_PORT.IN & SW_AF_D1_PIN_bm))	af_dp = (af_count & 0b01) ? 0xFF : 0;
+				if (!(SW_AF_D2_PORT.IN & SW_AF_D2_PIN_bm))	af_dp = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+				af_a = af_ap;
+				af_b = af_bp;
+				af_c = af_cp;
+				af_d = af_dp;
+				break;
+
+			case AF_MODE_HOLD:
+				af_a = af_b = af_c = af_d = 0xFF;
+				af_ap = af_bp = af_cp = af_dp = 0xFF;
+				break;
+		}
+/*
 		if (!(SW_AF_A1_PORT.IN & SW_AF_A1_PIN_bm))	af_a = (af_count & 0b01) ? 0xFF : 0;
 		if (!(SW_AF_A2_PORT.IN & SW_AF_A2_PIN_bm))	af_a = ((af_count & 0b10) >> 1) ? 0xFF : 0;
-		uint8_t af_b = 0;
 		if (!(SW_AF_B1_PORT.IN & SW_AF_B1_PIN_bm))	af_b = (af_count & 0b01) ? 0xFF : 0;
 		if (!(SW_AF_B2_PORT.IN & SW_AF_B2_PIN_bm))	af_b = ((af_count & 0b10) >> 1) ? 0xFF : 0;
-		uint8_t af_c = 0;
 		if (!(SW_AF_C1_PORT.IN & SW_AF_C1_PIN_bm))	af_c = (af_count & 0b01) ? 0xFF : 0;
 		if (!(SW_AF_C2_PORT.IN & SW_AF_C2_PIN_bm))	af_c = ((af_count & 0b10) >> 1) ? 0xFF : 0;
-		uint8_t af_d = 0;
 		if (!(SW_AF_D1_PORT.IN & SW_AF_D1_PIN_bm))	af_d = (af_count & 0b01) ? 0xFF : 0;
 		if (!(SW_AF_D2_PORT.IN & SW_AF_D2_PIN_bm))	af_d = ((af_count & 0b10) >> 1) ? 0xFF : 0;
+*/
+
+		uint8_t neo_port1 = 0;
+		uint8_t neo_port2 = 0;
 
 		// common to all modes
 		neo_port1 |= (sat_status2 & SAT_D0_bm) ? NEO_UP_PIN_bm : 0;
@@ -201,34 +251,39 @@ int main(void)
 		neo_port1 |= (ps_status1 & PS_S1_DOWN_bm) ? NEO_DOWN_PIN_bm : 0;
 		neo_port1 |= (ps_status1 & PS_S1_LEFT_bm) ? NEO_LEFT_PIN_bm : 0;
 		
-		uint8_t mode = 0;
-		mode |= (SW_MODE1_PORT.IN & SW_MODE1_PIN_bm) ? (1<<0) : 0;
-		mode |= (SW_MODE2_PORT.IN & SW_MODE2_PIN_bm) ? (1<<1) : 0;
-
 		// Saturn		D0	D1	D2	D3
 		// Status 1		-	-	-	L
 		// Status 2		Up	Dn	Lf	Rt
 		// Status 3		Z	Y	X	R
 		// Status 4		B	C	A	Start
 	
-		switch(mode)
+		switch(map)
 		{
-			case MODE_PAD:
+			case MAP_PAD:
 			default:
 			
 			// Saturn
-			neo_port2 |= (sat_status1 & SAT_D3_bm) ? NEO_START_PIN_bm : 0;		// L
+			if (sat_status4 & SAT_D3_bm)	// Start
+			{
+				neo_port2 |= (sat_status1 & SAT_D3_bm) ? NEO_START_PIN_bm : 0;		// L = Start
+				sat_status1 &= ~SAT_D3_bm;
+				neo_port2 |= (sat_status3 & SAT_D3_bm) ? NEO_SELECT_PIN_bm : 0;		// R = Select
+				sat_status3 &= ~SAT_D3_bm;
+			}
+			else
+			{
+				neo_port1 |= (sat_status1 & SAT_D3_bm) ? NEO_B_PIN_bm & af_b:  0;	// L = B'
+				neo_port2 |= (sat_status3 & SAT_D3_bm) ? NEO_D2_PIN_bm & af_d : 0;	// R = D'
+			}
+
+			neo_port1 |= (sat_status3 & SAT_D0_bm) ? NEO_C_PIN_bm & af_c : 0;	// Z = C'
+			neo_port1 |= (sat_status3 & SAT_D1_bm) ? NEO_D1_PIN_bm  : 0;		// Y = D
+			neo_port2 |= (sat_status3 & SAT_D1_bm) ? NEO_D2_PIN_bm  : 0;		// Y = D
+			neo_port1 |= (sat_status3 & SAT_D2_bm) ? NEO_C_PIN_bm : 0;			// X = C
 			
-			neo_port1 |= (sat_status3 & SAT_D0_bm) ? NEO_A_PIN_bm & af_a : 0;	// Z
-			neo_port1 |= (sat_status3 & SAT_D1_bm) ? NEO_C_PIN_bm  : 0;			// Y
-			neo_port1 |= (sat_status3 & SAT_D2_bm) ? NEO_A_PIN_bm : 0;			// X
-			neo_port2 |= (sat_status3 & SAT_D3_bm) ? NEO_SELECT_PIN_bm : 0;		// R
-			
-			neo_port1 |= (sat_status4 & SAT_D0_bm) ? NEO_D1_PIN_bm : 0;			// B
-			neo_port2 |= (sat_status4 & SAT_D0_bm) ? NEO_D2_PIN_bm : 0;			// B
-			neo_port1 |= (sat_status4 & SAT_D1_bm) ? NEO_B_PIN_bm & af_b : 0;	// C
-			neo_port1 |= (sat_status4 & SAT_D2_bm) ? NEO_B_PIN_bm : 0;			// A
-			neo_port2 |= (sat_status4 & SAT_D3_bm) ? NEO_START_PIN_bm : 0;		// Start
+			neo_port1 |= (sat_status4 & SAT_D0_bm) ? NEO_B_PIN_bm : 0;			// B = B
+			neo_port1 |= (sat_status4 & SAT_D1_bm) ? NEO_A_PIN_bm & af_a : 0;	// C = A'
+			neo_port1 |= (sat_status4 & SAT_D2_bm) ? NEO_A_PIN_bm : 0;			// A = A
 
 			// Playstation
 			if (!ps_ack_missed)
@@ -238,17 +293,39 @@ int main(void)
 				//neo_port2 |= (ps_status1 & PS_S1_R3_bm) ? NEO_SELECT_PIN_bm : 0;
 				neo_port2 |= (ps_status1 & PS_S1_START_bm) ? NEO_START_PIN_bm : 0;
 			
-				neo_port1 |= (ps_status2 & PS_S2_L2_bm) ? NEO_B_PIN_bm & af_b : 0;
-				neo_port1 |= (ps_status2 & PS_S2_R2_bm) ? NEO_D2_PIN_bm & af_d : 0;
+				neo_port1 |= (ps_status2 & PS_S2_L2_bm) ? NEO_C_PIN_bm & af_c : 0;
+				neo_port1 |= (ps_status2 & PS_S2_R2_bm) ? NEO_D1_PIN_bm & af_d : 0;
+				neo_port2 |= (ps_status2 & PS_S2_R2_bm) ? NEO_D2_PIN_bm & af_d : 0;
 				neo_port1 |= (ps_status2 & PS_S2_L1_bm) ? NEO_A_PIN_bm & af_a : 0;
-				neo_port1 |= (ps_status2 & PS_S2_R1_bm) ? NEO_C_PIN_bm & af_c : 0;
-				neo_port1 |= (ps_status2 & PS_S2_TRIANGLE_bm) ? NEO_C_PIN_bm : 0;
-				neo_port1 |= (ps_status2 & PS_S2_CIRCLE_bm) ? NEO_D2_PIN_bm : 0;
-				neo_port1 |= (ps_status2 & PS_S2_CROSS_bm) ? NEO_B_PIN_bm : 0;
-				neo_port1 |= (ps_status2 & PS_S2_SQUARE_bm) ? NEO_A_PIN_bm : 0;
+				neo_port1 |= (ps_status2 & PS_S2_R1_bm) ? NEO_B_PIN_bm & af_b : 0;
+				neo_port1 |= (ps_status2 & PS_S2_TRIANGLE_bm) ? NEO_D1_PIN_bm : 0;
+				neo_port2 |= (ps_status2 & PS_S2_TRIANGLE_bm) ? NEO_D2_PIN_bm : 0;
+				neo_port1 |= (ps_status2 & PS_S2_CIRCLE_bm) ? NEO_B_PIN_bm : 0;
+				neo_port1 |= (ps_status2 & PS_S2_CROSS_bm) ? NEO_A_PIN_bm : 0;
+				neo_port1 |= (ps_status2 & PS_S2_SQUARE_bm) ? NEO_C_PIN_bm : 0;
 			}
-			
+
 			break;
+		}
+
+		neo_port1 |= (ps_status2 & PS_S2_L2_bm) ? NEO_C_PIN_bm & af_c : 0;
+		neo_port1 |= (ps_status2 & PS_S2_R2_bm) ? NEO_D1_PIN_bm & af_d : 0;
+		neo_port2 |= (ps_status2 & PS_S2_R2_bm) ? NEO_D2_PIN_bm & af_d : 0;
+		neo_port1 |= (ps_status2 & PS_S2_L1_bm) ? NEO_A_PIN_bm & af_a : 0;
+		neo_port1 |= (ps_status2 & PS_S2_R1_bm) ? NEO_B_PIN_bm & af_b : 0;
+
+		if (af_mode == AF_MODE_HOLD)
+		{
+			if (!(SW_AF_A1_PORT.IN & SW_AF_A1_PIN_bm))	neo_port1 |= (af_count & 0b01) ? NEO_A_PIN_bm : 0;
+			if (!(SW_AF_A2_PORT.IN & SW_AF_A2_PIN_bm))	neo_port1 |= NEO_A_PIN_bm;
+			if (!(SW_AF_B1_PORT.IN & SW_AF_B1_PIN_bm))	neo_port1 |= (af_count & 0b01) ? NEO_B_PIN_bm : 0;
+			if (!(SW_AF_B2_PORT.IN & SW_AF_B2_PIN_bm))	neo_port1 |= NEO_B_PIN_bm;
+			if (!(SW_AF_C1_PORT.IN & SW_AF_C1_PIN_bm))	neo_port1 |= (af_count & 0b01) ? NEO_C_PIN_bm : 0;
+			if (!(SW_AF_C2_PORT.IN & SW_AF_C2_PIN_bm))	neo_port1 |= NEO_C_PIN_bm;
+			if (!(SW_AF_D1_PORT.IN & SW_AF_D1_PIN_bm))	neo_port1 |= (af_count & 0b01) ? NEO_D1_PIN_bm : 0;
+			if (!(SW_AF_D2_PORT.IN & SW_AF_D2_PIN_bm))	neo_port1 |= NEO_D1_PIN_bm;
+			if (!(SW_AF_D1_PORT.IN & SW_AF_D1_PIN_bm))	neo_port2 |= (af_count & 0b01) ? NEO_D2_PIN_bm : 0;
+			if (!(SW_AF_D2_PORT.IN & SW_AF_D2_PIN_bm))	neo_port2 |= NEO_D2_PIN_bm;
 		}
 
 		NEO_PORT1.DIR = neo_port1;

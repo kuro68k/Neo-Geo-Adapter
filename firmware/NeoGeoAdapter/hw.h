@@ -107,14 +107,17 @@
 #define SW_MODE1_PIN_bm		PIN5_bm
 #define SW_MODE2_PORT		PORTC
 #define SW_MODE2_PIN_bm		PIN4_bm
-#define MODE_PAD			0b00
-#define MODE_STICK1			0b01
-#define MODE_STICK2			0b10
+#define MAP_PAD				0b00
+#define MAP_STICK1			0b01
+#define MAP_STICK2			0b10
 
 #define SW_AUTO1_PORT		PORTC
 #define SW_AUTO1_PIN_bm		PIN7_bm
 #define SW_AUTO2_PORT		PORTC
 #define SW_AUTO2_PIN_bm		PIN6_bm
+#define AF_MODE_DUAL		0b00
+#define AF_MODE_ALL			0b01
+#define AF_MODE_HOLD		0b10
 
 
 #endif /* HW_H_ */
