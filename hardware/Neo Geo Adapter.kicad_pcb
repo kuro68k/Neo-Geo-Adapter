@@ -2788,6 +2788,7 @@
 			(uuid "7b70d9ee-44fe-4aa5-820e-7925f682a863")
 		)
 		(model "${KICAD6_3DMODEL_DIR}/Connector_Dsub.3dshapes/DSUB-15_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -2796,6 +2797,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "D:/Projects/Neo Geo Adapter/CAD/L77SDA15SA4CH4F--3DModel-STEP-533217.STEP"
+			(offset
+				(xyz -9.5 -10.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 180 0)
 			)
 		)
 	)
@@ -6101,7 +6113,7 @@
 		(descr "surface-mounted straight pin header, 2x03, 1.27mm pitch, double rows")
 		(tags "Surface mounted pin header SMD 2x03 1.27mm double row")
 		(property "Reference" "J101"
-			(at 0 -2.965 270)
+			(at 0 -2.965 -90)
 			(layer "F.SilkS")
 			(uuid "c4d4dc9e-6973-4ccf-a243-b2363cb04a65")
 			(effects
@@ -6112,7 +6124,7 @@
 			)
 		)
 		(property "Value" "AVR-UPDI-6"
-			(at 0 2.965 270)
+			(at 0 2.965 -90)
 			(layer "F.Fab")
 			(uuid "bdc27db0-47a5-437f-8ea9-00d436f60e45")
 			(effects
@@ -6504,7 +6516,7 @@
 			(uuid "ffe2509d-8e11-4b81-95ba-c74095d5e8ab")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "c9139d52-8dd1-4830-828a-e5682826bf61")
 			(effects
