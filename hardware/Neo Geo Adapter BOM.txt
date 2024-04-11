@@ -1,0 +1,19 @@
+#	Reference		Qty	Value				Footprint
+1	C101			1	10u					Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder	
+2	C102,C103,C104	3	100n				Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder	
+3	C105			1	1u					Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder	
+4	D101			1	LED					LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder	
+5	J101			1	AVR-UPDI-6			Connector_PinHeader_1.27mm:PinHeader_2x03_P1.27mm_Vertical_SMD	
+6	J102			1	Playstation			Retro_Game_Connectors_3rd_Party:Sony_Playstation	
+7	J103			1	Saturn				Retro_Game_Connectors_3rd_Party:Sega_Saturn	
+8	J104			1	NEO_GEO				Connector_Dsub:DSUB-15_Female_Horizontal_P2.77x2.84mm_EdgePinOffset7.70mm_Housed_MountingHolesOffset9.12mm	
+9	R101			1	470Ω				Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder	
+10	SW101			1	AF_A				Slide_Switch_TH:XKB_SS13D75	
+11	SW102			1	AF_B				Slide_Switch_TH:XKB_SS13D75	
+12	SW103			1	AF_C				Slide_Switch_TH:XKB_SS13D75	
+13	SW104			1	AF_D				Slide_Switch_TH:XKB_SS13D75	
+14	SW105			1	AUTO				Slide_Switch_TH:XKB_SS13D75	
+15	SW106			1	MODE				Slide_Switch_TH:XKB_SS13D75	
+16	U101			1	AVR32DA48x-xPT		Package_QFP:TQFP-48_7x7mm_P0.5mm	
+17	U102			1	MCP1700x-330xxMB	Package_TO_SOT_SMD:SOT-89-3	
+					
