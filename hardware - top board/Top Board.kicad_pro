@@ -448,7 +448,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "Neo Geo Adapter.kicad_pro",
+    "filename": "Top Board.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -486,9 +486,9 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "plot/Neo Geo Adapter.step",
-      "svg": "",
-      "vrml": "plot/Neo Geo Adapter.wrl"
+      "step": "plot/Top Board.step",
+      "svg": "plot/",
+      "vrml": "plot/Top Board.wrl"
     },
     "page_layout_descr_file": ""
   },
