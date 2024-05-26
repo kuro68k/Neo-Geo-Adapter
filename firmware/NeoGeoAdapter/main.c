@@ -8,7 +8,9 @@
 #include <stdbool.h>
 #include <avr/io.h>
 #include <avr/fuse.h>
+#include <avr/wdt.h>
 #include <avr/interrupt.h>
+#include <avr/cpufunc.h>
 #include <util/delay.h>
 #include "hw.h"
 
@@ -41,10 +43,12 @@ static void hw_init(void)
 	SLPCTRL.CTRLA = 0;	// disable sleep
 	
 	// set up main clock
-	CLKCTRL.MCLKCTRLA = CLKCTRL_CLKSEL_OSCHF_gc;
-	CLKCTRL.MCLKCTRLB = 0;
-	CLKCTRL.OSCHFCTRLA = CLKCTRL_FRQSEL_24M_gc;
-	CLKCTRL.MCLKLOCK = CLKCTRL_LOCKEN_bm;
+	ccp_write_io((void *) & CLKCTRL.OSCHFCTRLA, CLKCTRL_FRQSEL_24M_gc);
+	while (!(CLKCTRL.MCLKSTATUS & CLKCTRL_OSCHFS_bm))
+		;
+	ccp_write_io((void *) & CLKCTRL.MCLKCTRLA, CLKCTRL_CLKSEL_OSCHF_gc);
+	ccp_write_io((void *) & CLKCTRL.MCLKCTRLB, 0);
+	ccp_write_io((void *) & CLKCTRL.MCLKLOCK, CLKCTRL_LOCKEN_bm);
 	
 	// set up ports
 	PORTA.OUT = 0;
@@ -114,6 +118,8 @@ static void hw_init(void)
 */
 inline static uint8_t ps_rxtx(uint8_t tx_byte)
 {
+	_delay_us(15);
+	return 0xFF;
 	ps_ack_detected_SIG = 0;
 	SPI.DATA = PS_CMD_ADDR;
 	while (!(SPI.INTFLAGS & SPI_IF_bm));
@@ -130,41 +136,42 @@ int main(void)
 {
 	NVMCTRL.CTRLB = NVMCTRL_APPDATAWP_bm | NVMCTRL_APPCODEWP_bm;	// prevent accident writes to flash
 	hw_init();
-	sei();
+	//sei();
 	
 	// main loop
 	for(;;)
 	{
+		wdt_reset();
 		ps_ack_missed = false;
 		
 		// start Saturn comms
 		SAT_PORT.OUTSET = SAT_TH_bm | SAT_TL_bm | SAT_TR_bm;
 		// start PS comms
-		while (!(SPI.INTFLAGS & SPI_IF_bm));
-		PS_ACK_PORT.OUTCLR = PS_ATT_PIN_bm;
+		//while (!(SPI.INTFLAGS & SPI_IF_bm));
+		//PS_ACK_PORT.OUTCLR = PS_ATT_PIN_bm;
 		_delay_us(20);									// match PS timing
 		
 		// Saturn stage 1
-		uint8_t sat_status1 = SAT_PORT.IN;
+		uint8_t sat_status1 = SAT_PORT.IN ^ 0xFF;
 		SAT_PORT.OUTCLR = SAT_TH_bm;
 		// PS address controller
 		ps_rxtx(PS_CMD_ADDR);
 		
 		// Saturn stage 2
-		uint8_t sat_status2 = SAT_PORT.IN;
+		uint8_t sat_status2 = SAT_PORT.IN ^ 0xFF;
 		SAT_PORT.OUTCLR = SAT_TR_bm;
 		// PS read command
 		ps_rxtx(PS_CMD_READ);
 		
 		// Saturn stage 3
-		uint8_t sat_status3 = SAT_PORT.IN;
-		SAT_PORT.OUTSET = SAT_TH_bm | SAT_TR_bm;
+		uint8_t sat_status3 = SAT_PORT.IN ^ 0xFF;
+		SAT_PORT.OUTSET = SAT_TH_bm;
 		// PS unused (?) byte
 		ps_rxtx(0x00);
 
 		// Saturn stage 4
-		uint8_t sat_status4 = SAT_PORT.IN;
-		SAT_PORT.OUTSET = SAT_TL_bm;
+		uint8_t sat_status4 = SAT_PORT.IN ^ 0xFF;
+		SAT_PORT.OUTSET = SAT_TR_bm;
 		// PS first digital status byte
 		uint8_t ps_status1 = ps_rxtx(0x00);
 
@@ -240,6 +247,10 @@ int main(void)
 
 		uint8_t neo_port1 = 0;
 		uint8_t neo_port2 = 0;
+
+
+ps_status1 = 0;
+ps_status2 = 0;
 
 		// common to all modes
 		neo_port1 |= (sat_status2 & SAT_D0_bm) ? NEO_UP_PIN_bm : 0;
@@ -332,7 +343,7 @@ int main(void)
 		NEO_PORT2.DIR = neo_port2;
 	}
 }
-
+/*
 FUSES = {
 	.WDTCFG = WINDOW_OFF_gc | PERIOD_512CLK_gc,		// TODO: lower to minimum
 	.BODCFG = LVL_BODLEVEL3_gc | SAMPFREQ_128Hz_gc |
@@ -343,3 +354,6 @@ FUSES = {
 	.CODESIZE = FUSE_CODESIZE_DEFAULT,				// whole of flash is BOOT section
 	.BOOTSIZE = FUSE_BOOTSIZE_DEFAULT,
 };
+
+unsigned long __lock LOCKMEM = LOCK_KEY_NOLOCK_gc;
+*/
