@@ -9,6 +9,10 @@
 #ifndef HW_H_
 #define HW_H_
 
+// debug LED
+#define LED_PORT			PORTB
+#define LED_PIN_bm			PIN2_bm
+
 // Playstation
 #define SPI					SPI1	// PORTC
 #define PS_ACK_PORT			PORTB
