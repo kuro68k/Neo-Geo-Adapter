@@ -479,14 +479,14 @@ int main(void)
 }
 
 FUSES = {
-	.WDTCFG = WINDOW_OFF_gc | PERIOD_512CLK_gc,		// TODO: lower to minimum
+	.WDTCFG = WINDOW_OFF_gc | PERIOD_8CLK_gc,
 	.BODCFG = LVL_BODLEVEL3_gc | SAMPFREQ_128Hz_gc |
 			  ACTIVE_ENABLE_gc | SLEEP_ENABLE_gc,
 	.OSCCFG = CLKSEL_OSCHF_gc,
-	.SYSCFG0 = RSTPINCFG_RST_gc | FUSE_EESAVE,
+	.SYSCFG0 = CRCSRC_NOCRC_gc | RSTPINCFG_RST_gc | FUSE_EESAVE,
 	.SYSCFG1 = SUT_64MS_gc,
 	.CODESIZE = FUSE_CODESIZE_DEFAULT,				// whole of flash is BOOT section
 	.BOOTSIZE = FUSE_BOOTSIZE_DEFAULT,
 };
 
-//unsigned long __lock LOCKMEM = LOCK_KEY_NOLOCK_gc;
+unsigned long __lock LOCKMEM = LOCK_KEY_NOLOCK_gc;
