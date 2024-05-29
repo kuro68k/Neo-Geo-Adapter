@@ -148,6 +148,9 @@ int main(void)
 	{
 		wdt_reset();
 		bool ps_error = false;
+		uint8_t ps_status1 = 0;
+		uint8_t ps_status2 = 0;
+		uint8_t ps_mode = 0;
 		
 		// start Saturn comms
 		SAT_PORT.OUTSET = SAT_TH_bm | SAT_TL_bm | SAT_TR_bm;
@@ -168,34 +171,52 @@ int main(void)
 		uint8_t sat_status2 = SAT_PORT.IN ^ 0xFF;
 		SAT_PORT.OUTCLR = SAT_TR_bm;
 		// PS read command
-		uint8_t ps_mode = ps_rxtx(PS_CMD_READ);
-		if (ps_ack_missed)
-			ps_error = true;
-		if ((ps_mode != 0x41) && (ps_mode != 0x73) && (ps_mode != 0x53))
-			ps_error = true;
+		if (!ps_error)
+		{
+			ps_mode = ps_rxtx(PS_CMD_READ);
+			if (ps_ack_missed)
+				ps_error = true;
+			if ((ps_mode != 0x41) && (ps_mode != 0x73) && (ps_mode != 0x53))
+				ps_error = true;
+		}
+		else
+			_delay_us(2);	// Saturn timing
 		
 		// Saturn stage 3
 		uint8_t sat_status3 = SAT_PORT.IN ^ 0xFF;
 		SAT_PORT.OUTSET = SAT_TH_bm;
 		// PS unused (?) byte
-		uint8_t res = ps_rxtx(0x00);
-		if (ps_ack_missed)
-			ps_error = true;
-		if (res != 0x5A)
-			ps_error = true;
+		if (!ps_error)
+		{
+			uint8_t res = ps_rxtx(0x00);
+			if (ps_ack_missed)
+				ps_error = true;
+			if (res != 0x5A)
+				ps_error = true;
+		}
+		else
+			_delay_us(2);	// Saturn timing
 
 		// Saturn stage 4
 		uint8_t sat_status4 = SAT_PORT.IN ^ 0xFF;
 		SAT_PORT.OUTSET = SAT_TR_bm;
 		// PS first digital status byte
-		uint8_t ps_status1 = ps_rxtx(0x00) ^ 0xFF;
-		if (ps_ack_missed)
-			ps_error = true;
+		if (!ps_error)
+		{
+			ps_status1 = ps_rxtx(0x00) ^ 0xFF;
+			if (ps_ack_missed)
+				ps_error = true;
+		}
+		else
+			_delay_us(2);	// Saturn timing
 
 		// PS second digital status byte
-		uint8_t ps_status2 = ps_rxtx(0x00) ^ 0xFF;
-		if ((ps_mode != 0x41) && ps_ack_missed)
-			ps_error = true;
+		if (!ps_error)
+		{
+			ps_status2 = ps_rxtx(0x00) ^ 0xFF;
+			if ((ps_mode != 0x41) && ps_ack_missed)
+				ps_error = true;
+		}
 		
 		PS_ATT_PORT.OUTSET = PS_ATT_PIN_bm;
 		if (ps_error)
@@ -456,7 +477,7 @@ int main(void)
 		NEO_PORT2.DIR = neo_port2;
 	}
 }
-/*
+
 FUSES = {
 	.WDTCFG = WINDOW_OFF_gc | PERIOD_512CLK_gc,		// TODO: lower to minimum
 	.BODCFG = LVL_BODLEVEL3_gc | SAMPFREQ_128Hz_gc |
@@ -468,5 +489,4 @@ FUSES = {
 	.BOOTSIZE = FUSE_BOOTSIZE_DEFAULT,
 };
 
-unsigned long __lock LOCKMEM = LOCK_KEY_NOLOCK_gc;
-*/
+//unsigned long __lock LOCKMEM = LOCK_KEY_NOLOCK_gc;
