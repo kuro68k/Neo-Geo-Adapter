@@ -449,7 +449,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "Top Board.kicad_pro",
+    "filename": "Bottom Board.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -487,9 +487,9 @@
       "plot": "plot/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "plot/Top Board.step",
+      "step": "plot/Bottom Board.step",
       "svg": "plot/",
-      "vrml": "plot/Top Board.wrl"
+      "vrml": "plot/Bottom Board.wrl"
     },
     "page_layout_descr_file": ""
   },

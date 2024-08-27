@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "C&K_SP3T_Slide_Switch_OS103011MS8QP1")(type "KiCad")(uri "${KURO68K}/C&K_SP3T_Slide_Switch_OS103011MS8QP1.kicad_sym")(options "")(descr ""))
+)

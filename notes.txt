@@ -1,0 +1,55 @@
+PERIOD = 512CLK
+WINDOW = OFF
+SLEEP = ENABLE
+ACTIVE = ENABLE
+SAMPFREQ = 128Hz
+LVL = BODLEVEL3
+CLKSEL = OSCHF
+EESAVE = [X]
+RSTPINCFG = RST
+CRCSEL = CRC16
+CRCSRC = NOCRC
+SUT = 64MS
+
+WDTCFG = 0x01 (valid)		01
+BODCFG = 0x65 (valid)		0x03<<5		1<<2	1
+OSCCFG = 0x00 (valid)
+SYSCFG0 = 0xC9 (valid)		
+SYSCFG1 = 0x07 (valid)		07
+CODESIZE = 0x00 (valid)
+BOOTSIZE = 0x00 (valid)
+
+
+1	TH	TL	TR
+2		TL	TR
+3		TL
+4	TH	TL	TR
+5	TH	TL	TR
+
+
+	S0		S1	D0	D1	D2	D3
+1	TH	TL	TR				L
+2		TL	TR	Up	Dn	Lf	Rt
+3		TL		Z	Y	X	R
+4	TH	TL		B	C	A	St
+5	TH	TL	TR
+git-filter-repo --path "hardware - top board/Top Board-backups"/ --invert-paths
+
+PS	DIR
+DAT	IN		shift
+ACK	IN		shift
+CMD	OUT		div
+ATT	OUT		OD
+CLK	OUT		div
+
+
+Top board issues:
+- Top board fitting
+- Standoffs ~1mm too high, should be 9mm
+- JLCPCB code on front
+
+- Need bottom board
+
+Main board issues:
+- 3.3V for PS
+- Pull up resistors
